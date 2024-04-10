@@ -1,0 +1,52 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model JobApplication {
+  id          String             @id @default(cuid())
+  userId      String             @db.VarChar(255)
+  company     String             @db.VarChar(255)
+  position    String             @db.VarChar(255)
+  description String?
+  notes       String?
+  events      ApplicationEvent[]
+  links       ApplicationLink[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+model ApplicationEvent {
+  id               String               @id @default(cuid())
+  jobApplicationId String               @db.VarChar(30)
+  jobApplication   JobApplication       @relation(fields: [jobApplicationId], references: [id])
+  eventTypeId      String               @db.VarChar(30)
+  eventType        ApplicationEventType @relation(fields: [eventTypeId], references: [id])
+  date             DateTime
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+}
+
+model ApplicationEventType {
+  id        String             @id @default(cuid())
+  name      String             @db.VarChar(255)
+  events    ApplicationEvent[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model ApplicationLink {
+  id               String         @id @default(cuid())
+  url              String         @db.VarChar(8000)
+  jobApplicationId String         @db.VarChar(30)
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
