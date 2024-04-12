@@ -32,7 +32,7 @@ export const CreateJobForm = () => {
   } = useFieldArray({ control, name: "links" });
 
   return (
-    <div className="bg-gray-100 w-full rounded-2xl shadow-lg shadow-gray-800 p-6">
+    <div className="bg-white w-full rounded-2xl shadow-lg shadow-gray-800 p-6">
       <form action={handleCreateJobFormSubmit}>
         <div className="flex flex-col gap-2">
           <h1 className="text-xl text-gray-900 font-medium">Info</h1>

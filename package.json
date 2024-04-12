@@ -14,8 +14,10 @@
     "@hookform/resolvers": "^3.3.4",
     "@nextui-org/react": "^2.2.10",
     "@prisma/client": "^5.12.1",
+    "@react-stately/data": "^3.11.2",
     "classnames": "^2.5.1",
     "framer-motion": "^11.0.28",
+    "lodash": "^4.17.21",
     "next": "14.1.4",
     "prisma": "^5.12.1",
     "react": "^18",
@@ -25,6 +27,7 @@
     "zod-form-data": "^2.0.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
