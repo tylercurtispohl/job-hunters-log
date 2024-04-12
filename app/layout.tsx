@@ -22,12 +22,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="">
         <body
-          className={classnames("inter.className", "bg-green-800 h-screen")}
+          className={classnames(
+            "inter.className",
+            "bg-green-800 min-h-screen h-full"
+          )}
         >
           <Providers>
             <Nav />
             <main className="flex flex-row justify-center text-gray-900">
-              <div className="max-w-[1280px] w-full px-6">{children}</div>
+              <div className="max-w-[1280px] w-full p-6">{children}</div>
             </main>
           </Providers>
         </body>
