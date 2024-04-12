@@ -1,6 +1,6 @@
 "use client";
 
-import { JobsTableRow } from "@/app/types";
+import { EventTableRow } from "@/app/types";
 import {
   Table,
   TableHeader,
@@ -13,32 +13,15 @@ import {
 import { useAsyncList } from "@react-stately/data";
 import type { SortDescriptor } from "@nextui-org/react";
 import { sortBy } from "lodash";
-import { useRouter } from "next/navigation";
 
 const tableColumns = [
   {
-    key: "jobId",
-    label: "ID",
+    key: "name",
+    label: "Name",
   },
   {
-    key: "company",
-    label: "Company",
-  },
-  {
-    key: "position",
-    label: "Position",
-  },
-  {
-    key: "appliedDate",
-    label: "Applied On",
-  },
-  {
-    key: "lastEvent",
-    label: "Last Event",
-  },
-  {
-    key: "lastEventDate",
-    label: "Last Event Date",
+    key: "date",
+    label: "Date",
   },
 ];
 
@@ -46,11 +29,11 @@ const sortItems = ({
   items,
   sortDescriptor,
 }: {
-  items: JobsTableRow[];
+  items: EventTableRow[];
   sortDescriptor: SortDescriptor;
 }) => {
   let sortedItems = sortDescriptor.column
-    ? sortBy(items, (i) => i[sortDescriptor.column! as keyof JobsTableRow])
+    ? sortBy(items, (i) => i[sortDescriptor.column! as keyof EventTableRow])
     : items;
 
   if (sortDescriptor.direction === "descending") {
@@ -60,13 +43,11 @@ const sortItems = ({
   return sortedItems;
 };
 
-export const JobsTable = ({ rows }: { rows: JobsTableRow[] }) => {
-  const router = useRouter();
-
-  const list = useAsyncList<JobsTableRow>({
+export const EventTable = ({ rows }: { rows: EventTableRow[] }) => {
+  const list = useAsyncList<EventTableRow>({
     initialSortDescriptor: {
-      column: "appliedDate",
-      direction: "descending",
+      column: "date",
+      direction: "ascending",
     },
     async load({ sortDescriptor }) {
       return { items: sortItems({ items: rows, sortDescriptor }) };
@@ -80,18 +61,10 @@ export const JobsTable = ({ rows }: { rows: JobsTableRow[] }) => {
 
   return (
     <Table
-      aria-label="Job application table"
-      classNames={{
-        wrapper: [""],
-      }}
+      aria-label="Job application event table"
       isStriped
       sortDescriptor={list.sortDescriptor}
       onSortChange={list.sort}
-      selectionBehavior="replace"
-      selectionMode="multiple"
-      onRowAction={(key) => {
-        router.push(`/jobs/${key}`);
-      }}
     >
       <TableHeader columns={tableColumns}>
         {(column) => (
@@ -102,7 +75,7 @@ export const JobsTable = ({ rows }: { rows: JobsTableRow[] }) => {
       </TableHeader>
       <TableBody items={list.items}>
         {(item) => (
-          <TableRow key={item.jobId}>
+          <TableRow key={item.id}>
             {(columnKey) => (
               <TableCell>{getKeyValue(item, columnKey)}</TableCell>
             )}

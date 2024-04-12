@@ -6,3 +6,14 @@ export type JobsTableRow = {
   lastEvent: string;
   lastEventDate: string;
 };
+
+export type EventTableRow = {
+  id: string;
+  name: string;
+  date: string;
+};
+
+export type LinkTableRow = {
+  id: string;
+  url: string;
+};

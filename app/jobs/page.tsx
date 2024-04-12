@@ -2,11 +2,6 @@ import { CreateJobButton } from "@/app/components/jobs/createJobButton";
 import { Prisma } from "../lib/prisma/prisma";
 import { auth } from "@clerk/nextjs";
 import { sortBy } from "lodash";
-import type {
-  JobApplication,
-  ApplicationEvent,
-  ApplicationEventType,
-} from "@prisma/client";
 import { JobsTableRow } from "../types";
 import { JobsTable } from "../components/jobs/jobsTable";
 
