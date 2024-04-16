@@ -13,19 +13,30 @@ import {
   Button,
   Link,
 } from "@nextui-org/react";
+import { DeleteLinkButton } from "./deleteLinkButton";
 
 const tableColumns = [
   {
-    key: "actions",
+    key: "linkAction",
     label: "",
   },
   {
     key: "url",
     label: "URL",
   },
+  {
+    key: "deleteAction",
+    label: "",
+  },
 ];
 
-export const LinkTable = ({ rows }: { rows: LinkTableRow[] }) => {
+export const LinkTable = ({
+  jobId,
+  rows,
+}: {
+  jobId: string;
+  rows: LinkTableRow[];
+}) => {
   return (
     <Table
       aria-label="Job application event table"
@@ -46,17 +57,36 @@ export const LinkTable = ({ rows }: { rows: LinkTableRow[] }) => {
           <TableRow key={item.id}>
             {(columnKey) => (
               <TableCell>
-                {columnKey === "actions" ? (
-                  <div className=" w-0">
-                    <Button as={Link} href={item.url} target="_blank" size="sm">
-                      <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="text-nowrap w-full text-ellipsis overflow-hidden">
-                    {getKeyValue(item, columnKey)}
-                  </div>
-                )}
+                {(() => {
+                  switch (columnKey) {
+                    case "linkAction":
+                      return (
+                        <div className="">
+                          <Button
+                            as={Link}
+                            href={item.url}
+                            target="_blank"
+                            size="sm"
+                            variant="light"
+                          >
+                            <ArrowTopRightOnSquareIcon className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      );
+                    case "url":
+                      return (
+                        <p className="w-full max-w-52 sm:max-w-96 lg:max-w-[768px] truncate">
+                          {getKeyValue(item, columnKey)}
+                        </p>
+                      );
+                    case "deleteAction":
+                      return (
+                        <DeleteLinkButton linkId={item.id} jobId={jobId} />
+                      );
+                    default:
+                      return <></>;
+                  }
+                })()}
               </TableCell>
             )}
           </TableRow>

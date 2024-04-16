@@ -5,6 +5,8 @@ import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+const prismaClient = Prisma.getClient();
+
 export const handleCreateJobFormSubmit = async (data: FormData) => {
   const { userId } = auth();
 
@@ -17,9 +19,7 @@ export const handleCreateJobFormSubmit = async (data: FormData) => {
 
   const formattedDate = new Date(date).toISOString();
 
-  const client = Prisma.getClient();
-
-  await client.$transaction(async (tx) => {
+  await prismaClient.$transaction(async (tx) => {
     const job = await tx.jobApplication.create({
       data: {
         company,
@@ -57,4 +57,63 @@ export const handleCreateJobFormSubmit = async (data: FormData) => {
 
   revalidatePath("/jobs");
   redirect("/jobs");
+};
+
+export const deleteLink = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  // TODO: handle errors using zod parsing rather than checking for each input here
+  const linkId = data.get("linkId")?.toString();
+
+  if (!linkId) {
+    throw new Error("Missing linkId");
+  }
+
+  const jobId = data.get("jobId")?.toString();
+
+  if (!jobId) {
+    throw new Error("Missing Job ID");
+  }
+
+  await prismaClient.applicationLink.delete({
+    where: {
+      id: linkId,
+    },
+  });
+
+  revalidatePath(`/jobs/${jobId}`);
+};
+
+export const addLink = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  const url = data.get("url")?.toString();
+
+  // TODO: handle errors using zod parsing rather than checking for each input here
+  if (!url) {
+    throw new Error("Missing URL");
+  }
+
+  const jobId = data.get("jobId")?.toString();
+
+  if (!jobId) {
+    throw new Error("Missing Job ID");
+  }
+
+  await prismaClient.applicationLink.create({
+    data: {
+      url,
+      jobApplicationId: jobId,
+    },
+  });
+
+  revalidatePath(`/jobs/${jobId}`);
 };

@@ -1,4 +1,6 @@
 import { EventTable } from "@/app/components/events/eventTable";
+import { AddLinkForm } from "@/app/components/links/addLinkForm";
+import { LinkTable } from "@/app/components/links/linkTable";
 import { Prisma } from "@/app/lib/prisma/prisma";
 import { EventTableRow, LinkTableRow } from "@/app/types";
 import { Link } from "@nextui-org/react";
@@ -64,21 +66,14 @@ export default async function page({ params }: { params: { id: string } }) {
         <h1 className="text-xl text-gray-900 font-medium">Events</h1>
         <EventTable rows={eventRows} />
       </div>
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col gap-4">
         <h1 className="text-xl text-gray-900 font-medium">Links</h1>
-        {/* <LinkTable rows={linkRows} /> */}
-        {linkRows.map((l) => (
-          <div
-            key={l.id}
-            className="text-nowrap w-full text-ellipsis overflow-hidden"
-          >
-            <Link href={l.url} isExternal>
-              {l.url}
-            </Link>
-          </div>
-        ))}
+        <LinkTable jobId={id} rows={linkRows} />
+        <div>
+          <AddLinkForm jobId={id} />
+        </div>
       </div>
-      <pre>{JSON.stringify(job, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(job, null, 2)}</pre> */}
     </div>
   );
 }
