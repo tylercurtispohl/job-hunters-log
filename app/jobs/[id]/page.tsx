@@ -4,7 +4,8 @@ import { AddLinkForm } from "@/app/components/links/addLinkForm";
 import { LinkTable } from "@/app/components/links/linkTable";
 import { Prisma } from "@/app/lib/prisma/prisma";
 import { EventTableRow, LinkTableRow } from "@/app/types";
-import { Link } from "@nextui-org/react";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import { Button, Link } from "@nextui-org/react";
 import { sortBy } from "lodash";
 
 const prismaClient = Prisma.getClient();
@@ -48,7 +49,12 @@ export default async function page({ params }: { params: { id: string } }) {
   return (
     <div className="bg-white w-full rounded-2xl shadow-lg shadow-gray-800 p-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-xl text-gray-900 font-medium">Info</h1>
+        <div className="flex flex-row justify-between">
+          <h1 className="text-xl text-gray-900 font-medium">Info</h1>
+          <Button as={Link} href={`/jobs/edit/${job?.id}`} variant="light">
+            <PencilSquareIcon className="h-6 w-6" />
+          </Button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-4">
           <div>
             <p className="text-small text-foreground-500">Company</p>
@@ -80,7 +86,6 @@ export default async function page({ params }: { params: { id: string } }) {
           <AddLinkForm jobId={id} />
         </div>
       </div>
-      {/* <pre>{JSON.stringify(job, null, 2)}</pre> */}
     </div>
   );
 }

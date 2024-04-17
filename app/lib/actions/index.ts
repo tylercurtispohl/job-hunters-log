@@ -1,6 +1,10 @@
 "use server";
 import { Prisma } from "../prisma/prisma";
-import { createJobFormSchema, createEventFormSchema } from "../forms/job";
+import {
+  createJobFormSchema,
+  createEventFormSchema,
+  editJobFormSchema,
+} from "../forms/job";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -57,6 +61,33 @@ export const handleCreateJobFormSubmit = async (data: FormData) => {
 
   revalidatePath("/jobs");
   redirect("/jobs");
+};
+
+export const editJob = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  const { id, company, position, description, notes } =
+    editJobFormSchema.parse(data);
+
+  await prismaClient.jobApplication.update({
+    where: {
+      id,
+    },
+    data: {
+      id,
+      company,
+      position,
+      description,
+      notes,
+    },
+  });
+
+  revalidatePath(`/jobs/${id}`);
+  redirect(`/jobs/${id}`);
 };
 
 export const deleteLink = async (data: FormData) => {
