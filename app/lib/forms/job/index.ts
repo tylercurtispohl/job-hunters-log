@@ -23,3 +23,8 @@ export const createEventFormSchema = zfd.formData({
   jobId: zfd.text(z.string()),
   eventDate: zfd.text(z.string()),
 });
+
+export const addLinkFormSchema = zfd.formData({
+  url: zfd.text(z.string()),
+  jobId: zfd.text(z.string()),
+});

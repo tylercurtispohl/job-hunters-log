@@ -4,6 +4,7 @@ import {
   createJobFormSchema,
   createEventFormSchema,
   editJobFormSchema,
+  addLinkFormSchema,
 } from "../forms/job";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
@@ -126,18 +127,7 @@ export const addLink = async (data: FormData) => {
     throw new Error("User is not logged in");
   }
 
-  const url = data.get("url")?.toString();
-
-  // TODO: handle errors using zod parsing rather than checking for each input here
-  if (!url) {
-    throw new Error("Missing URL");
-  }
-
-  const jobId = data.get("jobId")?.toString();
-
-  if (!jobId) {
-    throw new Error("Missing Job ID");
-  }
+  const { url, jobId } = addLinkFormSchema.parse(data);
 
   await prismaClient.applicationLink.create({
     data: {
