@@ -10,9 +10,6 @@ import {
   TableCell,
   getKeyValue,
 } from "@nextui-org/react";
-import { useAsyncList } from "@react-stately/data";
-import type { SortDescriptor } from "@nextui-org/react";
-import { sortBy } from "lodash";
 import { DeleteEventButton } from "./deleteEventButton";
 
 const tableColumns = [
@@ -30,24 +27,6 @@ const tableColumns = [
   },
 ];
 
-const sortItems = ({
-  items,
-  sortDescriptor,
-}: {
-  items: EventTableRow[];
-  sortDescriptor: SortDescriptor;
-}) => {
-  let sortedItems = sortDescriptor.column
-    ? sortBy(items, (i) => i[sortDescriptor.column! as keyof EventTableRow])
-    : items;
-
-  if (sortDescriptor.direction === "descending") {
-    sortedItems = sortedItems.reverse();
-  }
-
-  return sortedItems;
-};
-
 export const EventTable = ({
   jobId,
   rows,
@@ -55,28 +34,8 @@ export const EventTable = ({
   jobId: string;
   rows: EventTableRow[];
 }) => {
-  const list = useAsyncList<EventTableRow>({
-    initialSortDescriptor: {
-      column: "date",
-      direction: "ascending",
-    },
-    async load({ sortDescriptor }) {
-      return { items: sortItems({ items: rows, sortDescriptor }) };
-    },
-    async sort({ items, sortDescriptor }) {
-      return {
-        items: sortItems({ items, sortDescriptor }),
-      };
-    },
-  });
-
   return (
-    <Table
-      aria-label="Job application event table"
-      isStriped
-      sortDescriptor={list.sortDescriptor}
-      onSortChange={list.sort}
-    >
+    <Table aria-label="Job application event table" isStriped>
       <TableHeader columns={tableColumns}>
         {(column) => (
           <TableColumn key={column.key} allowsSorting>
@@ -84,7 +43,7 @@ export const EventTable = ({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={list.items}>
+      <TableBody items={rows}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (

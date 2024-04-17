@@ -5,6 +5,7 @@ import { LinkTable } from "@/app/components/links/linkTable";
 import { Prisma } from "@/app/lib/prisma/prisma";
 import { EventTableRow, LinkTableRow } from "@/app/types";
 import { Link } from "@nextui-org/react";
+import { sortBy } from "lodash";
 
 const prismaClient = Prisma.getClient();
 
@@ -29,12 +30,14 @@ export default async function page({ params }: { params: { id: string } }) {
 
   // TODO: if job is not found redirect to not found page
 
-  const eventRows: EventTableRow[] =
+  const eventRows: EventTableRow[] = sortBy(
     job?.events.map((e) => ({
       id: e.id,
       name: e.eventType.name,
       date: e.date.toISOString(),
-    })) ?? [];
+    })) ?? [],
+    (e) => e.date
+  );
 
   const linkRows: LinkTableRow[] =
     job?.links.map((l) => ({
