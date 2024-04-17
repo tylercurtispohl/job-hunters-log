@@ -1,3 +1,4 @@
+import { AddEventForm } from "@/app/components/events/addEventForm";
 import { EventTable } from "@/app/components/events/eventTable";
 import { AddLinkForm } from "@/app/components/links/addLinkForm";
 import { LinkTable } from "@/app/components/links/linkTable";
@@ -23,6 +24,8 @@ export default async function page({ params }: { params: { id: string } }) {
       links: true,
     },
   });
+
+  const eventTypes = await prismaClient.applicationEventType.findMany();
 
   // TODO: if job is not found redirect to not found page
 
@@ -64,7 +67,8 @@ export default async function page({ params }: { params: { id: string } }) {
       </div>
       <div className="mt-6 flex flex-col gap-4">
         <h1 className="text-xl text-gray-900 font-medium">Events</h1>
-        <EventTable rows={eventRows} />
+        <EventTable jobId={id} rows={eventRows} />
+        <AddEventForm jobId={id} eventTypes={eventTypes} />
       </div>
       <div className="mt-6 flex flex-col gap-4">
         <h1 className="text-xl text-gray-900 font-medium">Links</h1>

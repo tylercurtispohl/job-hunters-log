@@ -9,3 +9,9 @@ export const createJobFormSchema = zfd.formData({
   date: zfd.text(z.string()),
   links: zfd.repeatable(z.array(z.object({ url: z.string() })).min(1)),
 });
+
+export const createEventFormSchema = zfd.formData({
+  eventTypeName: zfd.text(z.string()),
+  jobId: zfd.text(z.string()),
+  eventDate: zfd.text(z.string()),
+});

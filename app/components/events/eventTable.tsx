@@ -13,6 +13,7 @@ import {
 import { useAsyncList } from "@react-stately/data";
 import type { SortDescriptor } from "@nextui-org/react";
 import { sortBy } from "lodash";
+import { DeleteEventButton } from "./deleteEventButton";
 
 const tableColumns = [
   {
@@ -22,6 +23,10 @@ const tableColumns = [
   {
     key: "date",
     label: "Date",
+  },
+  {
+    key: "deleteAction",
+    label: "",
   },
 ];
 
@@ -43,7 +48,13 @@ const sortItems = ({
   return sortedItems;
 };
 
-export const EventTable = ({ rows }: { rows: EventTableRow[] }) => {
+export const EventTable = ({
+  jobId,
+  rows,
+}: {
+  jobId: string;
+  rows: EventTableRow[];
+}) => {
   const list = useAsyncList<EventTableRow>({
     initialSortDescriptor: {
       column: "date",
@@ -77,7 +88,13 @@ export const EventTable = ({ rows }: { rows: EventTableRow[] }) => {
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+              <TableCell>
+                {columnKey === "deleteAction" ? (
+                  <DeleteEventButton eventId={item.id} jobId={jobId} />
+                ) : (
+                  getKeyValue(item, columnKey)
+                )}
+              </TableCell>
             )}
           </TableRow>
         )}

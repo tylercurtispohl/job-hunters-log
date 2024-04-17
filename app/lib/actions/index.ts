@@ -1,6 +1,6 @@
 "use server";
 import { Prisma } from "../prisma/prisma";
-import { createJobFormSchema } from "../forms/job";
+import { createJobFormSchema, createEventFormSchema } from "../forms/job";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -113,6 +113,73 @@ export const addLink = async (data: FormData) => {
       url,
       jobApplicationId: jobId,
     },
+  });
+
+  revalidatePath(`/jobs/${jobId}`);
+};
+
+export const deleteEvent = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  // TODO: handle errors using zod parsing rather than checking for each input here
+  const eventId = data.get("eventId")?.toString();
+
+  if (!eventId) {
+    throw new Error("Missing eventId");
+  }
+
+  const jobId = data.get("jobId")?.toString();
+
+  if (!jobId) {
+    throw new Error("Missing Job ID");
+  }
+
+  await prismaClient.applicationEvent.delete({
+    where: {
+      id: eventId,
+    },
+  });
+
+  revalidatePath(`/jobs/${jobId}`);
+};
+
+export const addEvent = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  const { eventTypeName, eventDate, jobId } = createEventFormSchema.parse(data);
+
+  const formattedDate = new Date(eventDate).toISOString();
+
+  await prismaClient.$transaction(async (tx) => {
+    let eventType = await tx.applicationEventType.findFirst({
+      where: {
+        name: eventTypeName,
+      },
+    });
+
+    if (!eventType) {
+      eventType = await tx.applicationEventType.create({
+        data: {
+          name: eventTypeName,
+        },
+      });
+    }
+
+    await tx.applicationEvent.create({
+      data: {
+        jobApplicationId: jobId,
+        eventTypeId: eventType.id,
+        date: formattedDate,
+      },
+    });
   });
 
   revalidatePath(`/jobs/${jobId}`);
