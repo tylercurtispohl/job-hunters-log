@@ -5,7 +5,6 @@ import { addLinkFormSchema } from "@/app/lib/forms/job";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
-import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 export interface AddLinkFormValues {
@@ -63,7 +62,7 @@ export const AddLinkForm = ({ jobId }: { jobId: string }) => {
             variant="solid"
             className="bg-success-700 text-gray-100"
             size="md"
-            disabled={!isValid}
+            isDisabled={!isValid}
           >
             <PlusIcon className="h-5 w-5" />
             Add Link
