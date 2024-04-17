@@ -108,7 +108,7 @@ export const EditJobForm = ({
               size="lg"
               color="default"
               as={Link}
-              href="/jobs"
+              href={`/jobs/${initialValues.id}`}
             >
               Cancel
             </Button>
