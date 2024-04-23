@@ -205,3 +205,34 @@ export const addEvent = async (data: FormData) => {
 
   revalidatePath(`/jobs/${jobId}`);
 };
+
+export const deleteJob = async (jobId: string) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  await prismaClient.$transaction(async (tx) => {
+    await tx.applicationEvent.deleteMany({
+      where: {
+        jobApplicationId: jobId,
+      },
+    });
+
+    await tx.applicationLink.deleteMany({
+      where: {
+        jobApplicationId: jobId,
+      },
+    });
+
+    await tx.jobApplication.delete({
+      where: {
+        id: jobId,
+      },
+    });
+  });
+
+  revalidatePath("/jobs");
+  redirect("/jobs");
+};

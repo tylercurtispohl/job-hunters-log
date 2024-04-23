@@ -1,11 +1,12 @@
 import { AddEventForm } from "@/app/components/events/addEventForm";
 import { EventTable } from "@/app/components/events/eventTable";
+import { DangerZone } from "@/app/components/jobs/dangerZone";
 import { AddLinkForm } from "@/app/components/links/addLinkForm";
 import { LinkTable } from "@/app/components/links/linkTable";
 import { Prisma } from "@/app/lib/prisma/prisma";
 import { EventTableRow, LinkTableRow } from "@/app/types";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Button, Link } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button, Link } from "@nextui-org/react";
 import { sortBy } from "lodash";
 
 const prismaClient = Prisma.getClient();
@@ -85,6 +86,9 @@ export default async function page({ params }: { params: { id: string } }) {
         <div>
           <AddLinkForm jobId={id} />
         </div>
+      </div>
+      <div className="mt-6">
+        <DangerZone jobId={id} />
       </div>
     </div>
   );
