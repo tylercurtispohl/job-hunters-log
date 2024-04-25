@@ -1,9 +1,12 @@
-import { JobListLinkButton } from "@/app/components/jobs/jobListLinkButton";
+import { LinkButton } from "../components/linkButton";
 
 export default async function Page() {
   return (
     <>
-      <JobListLinkButton />
+      <div className="flex flex-row gap-2">
+        <LinkButton href="/jobs/">Go to jobs list</LinkButton>
+        <LinkButton href="/contacts/">Go to contacts list</LinkButton>
+      </div>
     </>
   );
 }

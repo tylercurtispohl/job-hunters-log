@@ -6,7 +6,7 @@ import { LinkTable } from "@/app/components/links/linkTable";
 import { Prisma } from "@/app/lib/prisma/prisma";
 import { EventTableRow, LinkTableRow } from "@/app/types";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
-import { Accordion, AccordionItem, Button, Link } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 import { sortBy } from "lodash";
 
 const prismaClient = Prisma.getClient();

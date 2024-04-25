@@ -9,6 +9,7 @@ import {
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createContactFormSchema } from "../forms/contacts";
 
 const prismaClient = Prisma.getClient();
 
@@ -235,4 +236,58 @@ export const deleteJob = async (jobId: string) => {
 
   revalidatePath("/jobs");
   redirect("/jobs");
+};
+
+export const createContact = async (data: FormData) => {
+  const { userId } = auth();
+
+  if (!userId) {
+    throw new Error("User is not logged in");
+  }
+
+  const {
+    name,
+    company,
+    email,
+    phoneNumber,
+    nextFollowUpDate,
+    notes,
+    contactType,
+  } = createContactFormSchema.parse(data);
+
+  const formattedDate =
+    typeof nextFollowUpDate === "string"
+      ? new Date(nextFollowUpDate).toISOString()
+      : null;
+
+  await prismaClient.$transaction(async (tx) => {
+    let existingContactType = await tx.contactType.findFirst({
+      where: {
+        name: contactType,
+      },
+    });
+
+    if (!existingContactType) {
+      existingContactType = await tx.contactType.create({
+        data: {
+          name: contactType,
+        },
+      });
+    }
+
+    await tx.contact.create({
+      data: {
+        name,
+        company,
+        email,
+        phoneNumber,
+        nextFollowUpDate: formattedDate,
+        notes,
+        contactTypeId: existingContactType.id,
+      },
+    });
+  });
+
+  revalidatePath("/contacts");
+  redirect("/contacts");
 };
