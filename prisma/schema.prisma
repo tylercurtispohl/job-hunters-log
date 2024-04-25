@@ -9,16 +9,17 @@ datasource db {
 }
 
 model JobApplication {
-  id          String             @id @default(cuid())
-  userId      String             @db.VarChar(255)
-  company     String             @db.VarChar(255)
-  position    String             @db.VarChar(255)
+  id          String                  @id @default(cuid())
+  userId      String                  @db.VarChar(255)
+  company     String                  @db.VarChar(255)
+  position    String                  @db.VarChar(255)
   description String?
   notes       String?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
   events      ApplicationEvent[]
   links       ApplicationLink[]
+  contacts    JobApplicationContact[]
 }
 
 model ApplicationEvent {
@@ -47,4 +48,58 @@ model ApplicationLink {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id])
+}
+
+model Contact {
+  id               String                  @id @default(cuid())
+  name             String                  @db.VarChar(128)
+  company          String                  @db.VarChar(128)
+  contactTypeId    String                  @db.VarChar(30)
+  contactType      ContactType             @relation(fields: [contactTypeId], references: [id])
+  email            String                  @db.VarChar(128)
+  phoneNumber      String                  @db.VarChar(128)
+  nextFollowUpDate DateTime
+  events           ContactEvent[]
+  applications     JobApplicationContact[]
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+}
+
+model ContactType {
+  id String @id @default(cuid())
+  name  String @db.VarChar(255)
+  contacts Contact[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model JobApplicationContact {
+  jobApplicationId String         @db.VarChar(30)
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id])
+  contactId        String         @db.VarChar(30)
+  contact          Contact        @relation(fields: [contactId], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@id([jobApplicationId, contactId])
+}
+
+model ContactEvent {
+  id          String           @id @default(cuid())
+  contactId   String           @db.VarChar(30)
+  contact     Contact          @relation(fields: [contactId], references: [id])
+  eventTypeId String           @db.VarChar(30)
+  eventType   ContactEventType @relation(fields: [eventTypeId], references: [id])
+  notes       String?
+  date        DateTime
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model ContactEventType {
+  id        String         @id @default(cuid())
+  name      String         @db.VarChar(255)
+  events    ContactEvent[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
