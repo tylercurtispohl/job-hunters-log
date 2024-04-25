@@ -1,5 +1,3 @@
-// schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,36 +15,36 @@ model JobApplication {
   position    String             @db.VarChar(255)
   description String?
   notes       String?
-  events      ApplicationEvent[]
-  links       ApplicationLink[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
+  events      ApplicationEvent[]
+  links       ApplicationLink[]
 }
 
 model ApplicationEvent {
   id               String               @id @default(cuid())
   jobApplicationId String               @db.VarChar(30)
-  jobApplication   JobApplication       @relation(fields: [jobApplicationId], references: [id])
   eventTypeId      String               @db.VarChar(30)
-  eventType        ApplicationEventType @relation(fields: [eventTypeId], references: [id])
   date             DateTime
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
+  eventType        ApplicationEventType @relation(fields: [eventTypeId], references: [id])
+  jobApplication   JobApplication       @relation(fields: [jobApplicationId], references: [id])
 }
 
 model ApplicationEventType {
   id        String             @id @default(cuid())
   name      String             @db.VarChar(255)
-  events    ApplicationEvent[]
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
+  events    ApplicationEvent[]
 }
 
 model ApplicationLink {
   id               String         @id @default(cuid())
   url              String         @db.VarChar(8000)
   jobApplicationId String         @db.VarChar(30)
-  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id])
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  jobApplication   JobApplication @relation(fields: [jobApplicationId], references: [id])
 }
